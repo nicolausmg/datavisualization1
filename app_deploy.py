@@ -69,7 +69,8 @@ with tab1:
     each graph and, in this way, determine the best graph to answer the proposed question.
 
     ##### 1.1 Data source
-    As I had trouble connecting with the seaborn datasets, I used one of the datasets provided for the first group activity we had in class.
+    As I had trouble connecting with the seaborn datasets, I used one of the datasets provided for the first group activity we had in class. The dataset only contains data until 2002, 
+    so for the purpose of the exercise we will asume that we are in 2002 and this is the most current data, otherwise the business question would not make sense. 
 
     #### 2. Why this question makes sense in a business context?
 
