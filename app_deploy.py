@@ -8,22 +8,16 @@ import gspread
 from google.oauth2.service_account import Credentials
 import json
 
-# Load Google Sheet data
 @st.cache_data
 def load_google_sheet():
-    # Load credentials from Streamlit Secrets
     creds_dict = json.loads(st.secrets["google_credentials"])
     creds = Credentials.from_service_account_info(creds_dict, scopes=["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"])
-
-    # Authorize and load Google Sheet
     client = gspread.authorize(creds)
     sheet = client.open("birdstrikes").sheet1
     data = sheet.get_all_records()
 
-    # Convert to DataFrame
     return pd.DataFrame(data)
 
-# Load data (cached)
 if 'df' not in st.session_state:
     st.session_state.df = load_google_sheet()
 
@@ -34,7 +28,7 @@ df['Year'] = df['Flight Date'].dt.year
 df = df.dropna(subset=['Year'])
 phase_counts = df.groupby(['Year', 'Phase of flight']).size().reset_index(name='Count')
 
-# Create the first figure: Line Chart
+# first figure: line chart
 fig1, axis1 = plt.subplots(figsize=(12, 6))
 sns.lineplot(data=phase_counts, x='Year', y='Count', hue='Phase of flight', marker='o', ax=axis1)
 axis1.set_xlabel('Year')
@@ -43,7 +37,7 @@ axis1.set_title('Birdstrikes by Phase of Flight Over Time')
 axis1.legend(title='Phase of Flight')
 axis1.grid(True)
 
-# Create the second figure: Stacked Bar Chart
+#  second figure: stacked bar chart
 fig2, axis2 = plt.subplots(figsize=(12, 6))
 phase_pivot = phase_counts.pivot(index='Year', columns='Phase of flight', values='Count')
 phase_pivot.plot(kind='bar', stacked=True, figsize=(12, 6), colormap='tab10', alpha=0.8, ax=axis2)
@@ -64,8 +58,8 @@ with tab1:
     ### Question: Excluding the Approach phase, which phase of the flight has experienced the highest number of birdstrikes between 1998 and 2002?
 
     #### 1. About the experiment
-    The idea behind the experiment is to identify which visualization is more effective in answering the question. You will be presented with two visualizations of 
-    birdstrikes, your task is to answer the question using the visualizations and you will be timed. At the end, you will be presented with the time you took to ansewr with 
+    The idea behind the experiment is to identify which visualization is more effective in answering the question. For this, you will be presented with two visualizations of 
+    birdstrikes over time, your task is to answer the question using the visualizations and you will be timed. At the end, you will be presented with the time you took to ansewr with 
     each graph and, in this way, determine the best graph to answer the proposed question.
 
     ##### 1.1 Data source
@@ -74,7 +68,7 @@ with tab1:
 
     #### 2. Why this question makes sense in a business context?
 
-    This is a relevant business question for airlines because understanding which phase of flight (excluding approach) experiences the most birdstrikes allows them to optimize flight 
+    This is a relevant business question for airlines because understanding which phase of flight experiences the most birdstrikes allows them to optimize flight 
     procedures and enhance safety measures. By identifying high-risk phases like takeoff, climb or landing roll, airlines can implement preventive strategies such as adjusting flight altitudes, 
     modifying speeds or coordinating with airports for better wildlife hazard management. 
 
@@ -87,8 +81,8 @@ with tab1:
     Then I remembered form class that Streamlit re-runs the script every time an interaction occurs, my dataset was reloading on every button click, which slowed down performance.
     To solve this, I implemented Streamlit’s caching mechanism we saw in class to ensure the file loads only once per session, and that significantly improved the page loading speed.
 
-    - Buttons: For the reset button, I had to click it twice before it reset. I had to loook for a way to make it work with one click. I found the solution in the Streamlit documentation,
-     I had to add st.rerun() to make it work. Without rerun, The first click updates st.session_state, but the changes are only applied on the next rerun. By adding st.rerun(), the changes are applied immediately.
+    - Buttons: For the "Reset" button, I had to click it twice before it reset. I had to loook for a way to make it work with one click. I found the solution in the Streamlit documentation,
+     I had to add st.rerun() to make it work. Without rerun, The first click updates st.session_state, but the changes are only applied on the next rerun (as we saw in class with the adding button). By adding st.rerun(), the changes are applied immediately.
     
     - Session State: We saw it in class, but it was for me still someting slightly tricky to understand. After playing around with it, I fully unserstood the concept and how to use it.
 
@@ -104,7 +98,7 @@ with tab2:
 
     ### Question: Excluding the Approach phase, which phase of the flight has experienced the highest number of birdstrikes between 1998 and 2002?
     
-     #### Inctructions
+     #### Instructions
 
     In this exercise, you will be presented with two visualizations of birdstrikes data between 1998 and 2002. Your task is to answer the question above using the visualizations.
 
@@ -157,9 +151,9 @@ with tab2:
         st.write(f"**Time to answer with the second graph:** {second_click_duration:.2f} seconds")
 
         if second_click_duration > first_click_duration:
-            st.write("**You were faster in answering using the first graph! That must be a better visualization**")
+            st.write("**You were faster in answering using the first graph! That must be a better visualization!!**")
         else:
-            st.write("**You were faster in answering using the second graph! That must be a better visualization**")
+            st.write("**You were faster in answering using the second graph! That must be a better visualization!!**")
         if st.button("Reset"):
             st.session_state.first_show = False
             st.session_state.second_show = False
