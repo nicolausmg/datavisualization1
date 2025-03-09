@@ -86,6 +86,9 @@ with tab1:
     Then I remembered form class that Streamlit re-runs the script every time an interaction occurs, my dataset was reloading on every button click, which slowed down performance.
     To solve this, I implemented Streamlit’s caching mechanism we saw in class to ensure the file loads only once per session, and that significantly improved the page loading speed.
 
+    - Buttons: For the reset button, I had to click it twice before it reset. I had to loook for a way to make it work with one click. I found the solution in the Streamlit documentation,
+     I had to add st.rerun() to make it work. Without rerun, The first click updates st.session_state, but the changes are only applied on the next rerun. By adding st.rerun(), the changes are applied immediately.
+    
     - Session State: We saw it in class, but it was for me still someting slightly tricky to understand. After playing around with it, I fully unserstood the concept and how to use it.
 
     #### 4. Is there a better chart than the other?
@@ -163,3 +166,4 @@ with tab2:
             st.session_state.mid_time = None
             st.session_state.end_time = None
             st.session_state.selected_graph = np.random.choice([1, 2])
+            st.rerun()
